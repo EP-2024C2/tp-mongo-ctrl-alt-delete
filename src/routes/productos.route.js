@@ -10,12 +10,20 @@ route.get('/productos', productosController.getAllProductos)
 
 route.get('/productos/:id',
     productosMiddleware.validateIdProducto,
-    productosController.getAllProductos
+    productosController.getProductoById
 )
 
 route.post('/productos',
     schemaValidator(productosSchema), 
-    productosController.createProducto
+    productosController.createProduct
 )
+
+route.put('/productos/:id',productosMiddleware.validateIdProducto, productosController.updateProduct)
+
+route.delete('/producto/:id',productosMiddleware.validateIdProducto, productosController.deleteProductById)
+
+route.get('/productos/:id/fabricantes', productosMiddleware.validateIdProducto, productosController.getProductWhitAllFabricantes)
+
+route.get('/productos/:id/componentes', productosMiddleware.validateIdProducto, productosController.getProductWhitAllComponents)
 
 module.exports = route
