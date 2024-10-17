@@ -1,4 +1,4 @@
-const { Componentes, Fabricantes } = require('../models')
+const { Fabricantes } = require('../models')
 
 const controller = {}
 

@@ -6,15 +6,11 @@ const app = express()
 const PORT = 3001
 
 app.use(express.json())
-
-app.use(genericMiddleware.requestTime)
-app.use(routes.seriesRoute)
-app.use(routes.usuariosRoute)
-app.use(routes.actoresRoute)
+// app.use(routes.componentesRoute)
+app.use(routes.productosRoute)
+// app.use(routes.fabricantesRoute)
 app.listen(PORT, async ()=>{
+    db.sequelize.sync({force:true})
+    
     console.log(`Aplicacion iniciada en el puerto ${PORT}`)
-    //Esto lo hacemos solo en desarrollo para sincronizar el modelo con la db
-    // Descomentar solo cuando hay cambios en el modelo
-    // ojo que se dropean todas las tablas
-    //db.sequelize.sync({force:true})
 })

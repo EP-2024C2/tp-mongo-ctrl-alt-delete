@@ -13,12 +13,12 @@ module.exports = (sequelize, DataTypes) => {
       Fabricantes.belongsToMany(models.Productos, {through: 'Producto_Fabricante'})
     }
   }
-  Productos.init({
+  Fabricantes.init({
     nombre: DataTypes.STRING,
     descripcion: DataTypes.TEXT
   }, {
     sequelize,
     modelName: 'Fabricantes',
   });
-  return Componentes;
+  return Fabricantes;
 };

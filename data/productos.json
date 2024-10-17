@@ -1,0 +1,9 @@
+[
+    {
+        "id":1,
+        "nombre" : "Switch",
+        "descripcion" : "consola",
+        "precio" : 300000,
+        "pathImg": ""
+    }
+]

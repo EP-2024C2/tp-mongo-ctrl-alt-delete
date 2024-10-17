@@ -13,7 +13,7 @@ module.exports = (sequelize, DataTypes) => {
       Componentes.belongsToMany(models.Productos, {through: 'Producto_Componente'})
     }
   }
-  Productos.init({
+  Componentes.init({
     nombre: DataTypes.STRING,
     descripcion: DataTypes.TEXT
   }, {

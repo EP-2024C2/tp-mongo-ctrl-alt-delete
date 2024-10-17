@@ -1,5 +1,5 @@
-const seriesRoute = require('./series.route')
-const usuariosRoute = require('./usuarios.route')
-const actoresRoute = require('./actores.route')
+const productosRoute = require('./productos.route')
+const fabricantesRoute = require('./fabricantes.route')
+const componentesRoute = require('./componentes.route')
 
-module.exports = {seriesRoute,usuariosRoute, actoresRoute}
+module.exports = {productosRoute,fabricantesRoute, componentesRoute}

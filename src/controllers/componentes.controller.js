@@ -1,4 +1,4 @@
-const { Componentes, Productos } = require('../models')
+const { Componentes } = require('../models')
 
 const controller = {}
 

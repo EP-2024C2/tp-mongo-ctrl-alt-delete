@@ -1,4 +1,3 @@
-const genericMiddleware = require('./generic.middleware')
-const seriesMiddleware = require('./series.middleware')
+const productosMiddleware = require('./productos.middleware')
 
-module.exports = { genericMiddleware, seriesMiddleware}
+module.exports = {productosMiddleware}
