@@ -19,5 +19,8 @@ const productoSchema = Joi.object().keys(
 ).unknown(false).messages ({
     'object.unknown': 'El atributo {#label} no está permitido.'
 })
+const productosArraySchema = Joi.array().items(productoSchema).min(1).messages({
+    'array.min': 'Debes enviar al menos un producto',
+  });
 
-module.exports = productoSchema
+module.exports = {productoSchema, productosArraySchema}

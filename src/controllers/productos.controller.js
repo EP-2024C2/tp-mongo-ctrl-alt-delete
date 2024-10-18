@@ -77,7 +77,6 @@ const getProductoWhitAllComponents = async(req, res) => {
         }
     });
     res.status(200).json(producto)
-    //faltaría poner el status 404, que lo pide la consigna, debería ser un middleware
 }
 controller.getProductoWhitAllComponents = getProductoWhitAllComponents
 

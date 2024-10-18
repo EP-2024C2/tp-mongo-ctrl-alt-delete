@@ -25,7 +25,6 @@ const createComponente = async (req, res) => {
         
     })
     res.status(201).json(componente)
-    //middleware status 400, faltaría
 }
 controller.createComponente = createComponente
 
@@ -45,7 +44,6 @@ const deleteComponenteById = async (req, res) => {
     const idComponente = req.params.id
     const r = await Componentes.destroy( {where: {id:idComponente}})
     res.status(200).json({mensaje:  `Componente eliminado`})
-    //faltaría status 404 y 500
 }
 controller.deleteComponenteById = deleteComponenteById
 
@@ -60,7 +58,6 @@ const getComponentWhitAllProducts = async(req, res) => {
         }
     });
     res.status(200).json(componente)
-    //faltaría poner el status 404, que lo pide la consigna, debería ser un middleware
 }
 controller.getComponentWhitAllProducts = getComponentWhitAllProducts
 

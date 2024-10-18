@@ -18,14 +18,15 @@ const getFabricanteById = async(req, res) => {
 controller.getFabricanteById = getFabricanteById
 
 const createFabricante = async (req, res) => {
-    const {nombre, descripcion} = req.body
+    const {nombre, direccion, numeroContacto, pathImgPerfil} = req.body
     const product = await Fabricantes.create({
         nombre,
-        descripcion,
-        
+        direccion,
+        numeroContacto, 
+        pathImgPerfil 
     })
     res.status(201).json(product)
-    //middleware status 400, faltaría
+    
 }
 controller.createFabricante = createFabricante
 
