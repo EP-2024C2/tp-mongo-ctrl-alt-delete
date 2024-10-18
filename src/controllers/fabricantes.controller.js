@@ -32,12 +32,12 @@ controller.createFabricante = createFabricante
 const updateFabricante = async (req, res) => {
     const {nombre, descripcion} = req.body
     const id = req.params.id
+    await Fabricantes.update(
+        { nombre, direccion, numeroContacto, pathImgPerfil },
+        { where: { id } }
+    );
     const fabricante = await Fabricantes.findByPk(id)
-    fabricante.nombre = nombre;
-    fabricante.descripcion = descripcion;
-    await fabricante.save()
     res.status(200).json(fabricante)
-    //faltaría middleware con status 404
 }
 controller.updateFabricante = updateFabricante
 
@@ -59,7 +59,6 @@ const getFabricanteWhitAllComponents = async(req, res) => {
         }
     });
     res.status(200).json(producto)
-    //faltaría poner el status 404, que lo pide la consigna, debería ser un middleware
 }
 controller.getFabricanteWhitAllComponents = getFabricanteWhitAllComponents
 

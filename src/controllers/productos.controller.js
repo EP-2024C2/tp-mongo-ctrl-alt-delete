@@ -13,71 +13,104 @@ const getProductoById = async(req, res) => {
     const id =  req.params.id;
     const producto = await Productos.findOne({where: {id}});
     res.status(200).json(producto)
-    //faltaría poner el status 404, que lo pide la consigna, debería ser un middleware
 }
 controller.getProductoById = getProductoById
 
-const createProduct = async (req, res) => {
+const createProducto = async (req, res) => {
     const {nombre, descripcion, precio, pathImg} = req.body
-    const product = await Productos.create({
+    const producto = await Productoos.create({
         nombre,
         descripcion,
         precio,
         pathImg
     })
-    res.status(201).json(product)
-    //middleware status 400, faltaría
+    res.status(201).json(producto)
 }
-controller.createProduct = createProduct
+controller.createProducto = createProducto
 
-const updateProduct = async (req, res) => {
+const updateProducto = async (req, res) => {
     const {nombre, descripcion, precio, pathImg} = req.body
     const id = req.params.id
-    const product = await Productos.findByPk(id)
-    product.nombre = nombre;
-    product.descripcion = descripcion;
-    product.precio = precio;
-    product.pathImg = pathImg;
-    await product.save()
-    res.status(200).json(product)
-    //faltaría middleware con status 404
-}
-controller.updateProduct = updateProduct
 
-const deleteProductById = async (req, res) => {
-    const idProduct = req.params.id
-    const r = await Productos.destroy( {where: {id:idProduct}})
+    await Productos.update(
+        { nombre, descripcion, precio, pathImg },
+        { where: { id } }
+    );
+    const updatedProducto = await Productos.findByPk(id);
+    res.status(200).json(updatedProducto)
+}
+controller.updateProducto = updateProducto
+
+const deleteProductoById = async (req, res) => {
+    const idProducto = req.params.id
+    const r = await Productos.destroy( {where: {id:idProducto}})
     res.status(200).json({mensaje:  `Producto eliminado`})
-    //faltaría status 404 y 500
 }
-controller.deleteProductById = deleteProductById
+controller.deleteProductoById = deleteProductoById
 
-const getProductWhitAllFabricantes = async(req, res) => {
+const getProductoWhitAllFabricantes = async(req, res) => {
     const id =  req.params.id;
     const producto = await Productos.findOne({
         where: {id},
         include: {
             model: Fabricantes,
-            as: 'Fabricantes'
+            as: 'Fabricantes',
+            through: {
+                attributes: []
+            }
         }
     });
     res.status(200).json(producto)
-    //faltaría poner el status 404, que lo pide la consigna, debería ser un middleware
 }
-controller.getProductWhitAllFabricantes = getProductWhitAllFabricantes
+controller.getProductoWhitAllFabricantes = getProductoWhitAllFabricantes
 
-const getProductWhitAllComponents = async(req, res) => {
+const getProductoWhitAllComponents = async(req, res) => {
     const id =  req.params.id;
     const producto = await Productos.findOne({
         where: {id},
         include: {
             model: Componentes,
-            as: 'Componentes'
+            as: 'Componentes',
+            through: {
+                attributes: []
+            }
         }
     });
     res.status(200).json(producto)
     //faltaría poner el status 404, que lo pide la consigna, debería ser un middleware
 }
-controller.getProductWhitAllComponents = getProductWhitAllComponents
+controller.getProductoWhitAllComponents = getProductoWhitAllComponents
+
+const addFabricantesToProducto = async (req, res) => {
+    const arrayFabricantes = req.body
+    const id = req.params.id
+    const productos = await Productos.findByPk(id) 
+     
+    let promesas = [];
+    arrayFabricantes.forEach(fabricante => {
+        promesas.push( Fabricantes.create(fabricante) )
+    });
+    const fabricantes = await Promise.all(promesas)
+    productos.addFabricantes(fabricantes)
+    res.status(201).json({message: 'Los fabricantes fueron asociados al producto'})
+}
+
+controller.addFabricantesToProducto = addFabricantesToProducto
+
+const addComponentesToProducto = async (req, res) => {
+    const arrayComponentes = req.body
+    const id = req.params.id
+    const productos = await Productos.findByPk(id) 
+     
+    let promesas = [];
+    arrayComponentes.forEach(componente => {
+        promesas.push( Componentes.create(componente) )
+    });
+    const componentes = await Promise.all(promesas)
+    productos.addComponentes(componentes)
+    res.status(201).json({message: 'Los componentes fueron asociados al producto'})
+}
+
+controller.addComponentesToProducto = addComponentesToProducto
 
 module.exports = controller

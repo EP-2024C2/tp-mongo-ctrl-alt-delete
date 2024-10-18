@@ -32,12 +32,12 @@ controller.createComponente = createComponente
 const updateComponente = async (req, res) => {
     const {nombre, descripcion} = req.body
     const id = req.params.id
+    const [updated] = await Componentes.update(
+        { nombre, descripcion },
+        { where: { id } }
+    );
     const componente = await Componentes.findByPk(id)
-    componente.nombre = nombre;
-    componente.descripcion = descripcion;
-    await componente.save()
     res.status(200).json(componente)
-    //faltaría middleware con status 404
 }
 controller.updateComponente = updateComponente
 
