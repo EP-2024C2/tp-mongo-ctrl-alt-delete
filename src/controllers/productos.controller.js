@@ -1,4 +1,5 @@
 const { Componentes, Productos, Fabricantes } = require('../models')
+const { Sequelize, DataTypes } = require('sequelize');
 
 const controller = {}
 
@@ -18,7 +19,7 @@ controller.getProductoById = getProductoById
 
 const createProducto = async (req, res) => {
     const {nombre, descripcion, precio, pathImg} = req.body
-    const producto = await Productoos.create({
+    const producto = await Productos.create({
         nombre,
         descripcion,
         precio,
@@ -111,5 +112,37 @@ const addComponentesToProducto = async (req, res) => {
 }
 
 controller.addComponentesToProducto = addComponentesToProducto
+
+const filterProductoMinMaxPrecio = async (req,res) => {
+    const { minPrecio, maxPrecio } = req.params;
+    const productos = await Productos.findAll({
+        where: {
+            precio: {
+                [Sequelize.Op.gte]: Number(minPrecio),
+                [Sequelize.Op.lte]: Number(maxPrecio)
+            }
+        }
+    });
+    res.status(200).json(productos);
+}
+controller.filterProductoMinMaxPrecio = filterProductoMinMaxPrecio
+
+const addFabricanteToProductoById = async (req, res) => {
+    const { productoId, fabricanteId } = req.params;
+    const producto = await Productos.findByPk(productoId);
+    const fabricante = await Fabricantes.findByPk(fabricanteId);
+    await producto.addFabricantes(fabricante);
+    res.status(201).json({ message: 'Fabricante asociado al producto con éxito' });
+}
+controller.addFabricanteToProductoById = addFabricanteToProductoById
+
+const addComponenteToProductoById = async (req, res) => {
+    const { productoId, componenteId } = req.params;
+    const producto = await Productos.findByPk(productoId);
+    const componente = await Componentes.findByPk(componenteId);
+    await producto.addComponentes(componente);
+    res.status(201).json({ message: 'Componente asociado al producto con éxito' });
+}
+controller.addComponenteToProductoById = addComponenteToProductoById
 
 module.exports = controller

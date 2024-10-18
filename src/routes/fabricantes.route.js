@@ -11,7 +11,9 @@ route.get('/fabricantes', fabricantesController.getAllFabricantes)
 
 route.get('/fabricantes/:id', fabricantesMiddleware.validateIdFabricante, fabricantesController.getFabricanteById )
 
-route.post('/fabricantes',schemaValidator(fabricanteSchema), fabricantesController.createFabricante)
+route.post('/fabricantes',
+            //schemaValidator(fabricanteSchema), 
+            fabricantesController.createFabricante)
 
 route.put('/fabricantes/:id', fabricantesMiddleware.validateIdFabricante, fabricantesController.updateFabricante)
 

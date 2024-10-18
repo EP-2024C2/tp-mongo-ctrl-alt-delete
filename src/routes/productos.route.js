@@ -1,6 +1,8 @@
 const { Router } = require('express')
 const productosController = require('../controllers/productos.controller')
 const { productosMiddleware } = require('../middlewares')
+const { componentesMiddleware } = require('../middlewares')
+const { fabricantesMiddleware } = require('../middlewares')
 const schemaValidator = require('../middlewares/schemaValidator')
 const productosSchema = require('../schemas/productos.schema')
 const {fabricanteSchema,fabricantesArraySchema} = require('../schemas/fabricantes.schema')
@@ -16,7 +18,7 @@ route.get('/productos/:id',
 )
 
 route.post('/productos',
-    schemaValidator(productosSchema), 
+    //schemaValidator(productosSchema), 
     productosController.createProducto
 )
 
@@ -38,4 +40,9 @@ route.post('/productos/:id/componentes',
     schemaValidator(componentesArraySchema), 
     productosController.addComponentesToProducto)
 
+route.get('/productos/:minPrecio/:maxPrecio',productosMiddleware.validarPrecios, productosController.filterProductoMinMaxPrecio)
+
+route.put('/productos/:productoId/fabricantes/:fabricanteId', productosController.addFabricanteToProductoById)
+
+route.put('/productos/:productoId/componentes/:componenteId', productosController.addComponenteToProductoById)
 module.exports = route

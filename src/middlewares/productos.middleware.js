@@ -9,5 +9,20 @@ const validateIdProducto = async (req, res, next)=>{
 }
 middleware.validateIdProducto = validateIdProducto
 
+function validarPrecios(req, res, next) {
+    const { minPrecio, maxPrecio } = req.params;
+
+    const min = Number(minPrecio);
+    const max = Number(maxPrecio);
+
+    if (min < 0 || max < 0) {
+        return res.status(400).json({ error: 'Los precios no pueden ser menores a 0.' });
+    }
+
+    next();
+}
+middleware.validarPrecios = validarPrecios
+  
+
 module.exports = middleware
 

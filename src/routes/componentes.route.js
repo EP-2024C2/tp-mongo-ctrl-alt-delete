@@ -11,7 +11,9 @@ route.get('/componentes', componentesController.getAllComponentes)
 
 route.get('/componente/:id', componentesMiddleware.validateIdComponente, componentesController.getComponenteById )
 
-route.post('/componentes',schemaValidator(componenteSchema), componentesController.createComponente)
+route.post('/componentes',
+    //schemaValidator(componenteSchema), 
+    componentesController.createComponente)
 
 route.put('/componentes/:id', componentesMiddleware.validateIdComponente, componentesController.updateComponente)
 
