@@ -43,9 +43,15 @@ const updateProducto = async (req, res) => {
 controller.updateProducto = updateProducto
 
 const deleteProductoById = async (req, res) => {
-    const idProducto = req.params.id
-    const r = await Productos.destroy( {where: {id:idProducto}})
-    res.status(200).json({mensaje:  `Producto eliminado`})
+    try{
+        const idProducto = req.params.id
+        const r = await Productos.destroy( {where: {id:idProducto}})
+        res.status(200).json({mensaje:  `Producto eliminado`})
+    }
+    catch(error){
+        console.error(error);
+        res.status(500).json({mensaje:  `Ha ocurrido un error`})
+    }
 }
 controller.deleteProductoById = deleteProductoById
 

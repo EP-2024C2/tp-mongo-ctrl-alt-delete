@@ -1,6 +1,6 @@
 const Joi = require('joi')
 
-const productoSchema = Joi.object().keys(
+const productosSchema = Joi.object().keys(
     {
         nombre: Joi.string().required().min(3).max(255).messages( {
             "any.required":"El nombre es requerido",
@@ -19,8 +19,8 @@ const productoSchema = Joi.object().keys(
 ).unknown(false).messages ({
     'object.unknown': 'El atributo {#label} no está permitido.'
 })
-const productosArraySchema = Joi.array().items(productoSchema).min(1).messages({
+const productosArraySchema = Joi.array().items(productosSchema).min(1).messages({
     'array.min': 'Debes enviar al menos un producto',
   });
 
-module.exports = {productoSchema, productosArraySchema}
+module.exports = {productosSchema, productosArraySchema}

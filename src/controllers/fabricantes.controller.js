@@ -43,10 +43,15 @@ const updateFabricante = async (req, res) => {
 controller.updateFabricante = updateFabricante
 
 const deleteFabricanteById = async (req, res) => {
+    try{
     const idFabricante = req.params.id
     const r = await Fabricantes.destroy( {where: {id:idFabricante}})
     res.status(200).json({mensaje:  `Fabricante eliminado`})
-    //faltaría status 404 y 500
+    }
+    catch(error){
+        console.error(error);
+        res.status(500).json({mensaje:  `Ha ocurrido un error`})
+    }
 }
 controller.deleteFabricanteById = deleteFabricanteById
 

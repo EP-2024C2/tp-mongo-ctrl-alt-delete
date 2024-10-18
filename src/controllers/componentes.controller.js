@@ -41,9 +41,15 @@ const updateComponente = async (req, res) => {
 controller.updateComponente = updateComponente
 
 const deleteComponenteById = async (req, res) => {
+    try{
     const idComponente = req.params.id
     const r = await Componentes.destroy( {where: {id:idComponente}})
     res.status(200).json({mensaje:  `Componente eliminado`})
+    }
+    catch(error){
+        console.error(error);
+        res.status(500).json({mensaje:  `Ha ocurrido un error`})
+    }
 }
 controller.deleteComponenteById = deleteComponenteById
 
