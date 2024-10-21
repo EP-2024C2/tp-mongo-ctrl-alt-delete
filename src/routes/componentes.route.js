@@ -9,7 +9,7 @@ const route = Router()
 
 route.get('/componentes', componentesController.getAllComponentes)
 
-route.get('/componente/:id', componentesMiddleware.validateIdComponente, componentesController.getComponenteById )
+route.get('/componentes/:id', componentesMiddleware.validateIdComponente, componentesController.getComponenteById )
 
 route.post('/componentes',
     schemaValidator(componenteSchema), 
@@ -19,6 +19,6 @@ route.put('/componentes/:id', componentesMiddleware.validateIdComponente, compon
 
 route.delete('/componentes/:id', componentesMiddleware.validateIdComponente, componentesController.deleteComponenteById)
 
-route.get('/componentes/:id/productos',schemaValidator(productosArraySchema), componentesMiddleware.validateIdComponente, componentesController.getComponentWhitAllProducts)
+route.get('/componentes/:id/productos', componentesMiddleware.validateIdComponente, componentesController.getComponentWhitAllProducts)
 
 module.exports = route

@@ -22,7 +22,7 @@ route.post('/productos',
 
 route.put('/productos/:id',productosMiddleware.validateIdProducto, productosController.updateProducto)
 
-route.delete('/productos/:id', productosController.deleteProductoById)
+route.delete('/productos/:id',productosMiddleware.validateIdProducto, productosController.deleteProductoById)
 
 route.get('/productos/:id/fabricantes', productosMiddleware.validateIdProducto, productosController.getProductoWhitAllFabricantes)
 

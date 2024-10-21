@@ -1,4 +1,4 @@
-const { Fabricantes, Componentes } = require('../models')
+const { Fabricantes, Productos } = require('../models')
 
 const controller = {}
 
@@ -11,27 +11,27 @@ controller.getAllFabricantes = getAllFabricantes
 
 const getFabricanteById = async(req, res) => {
     const id =  req.params.id;
-    const componente = await Fabricantes.findOne({ where: {id} });
-    res.status(200).json(Fabricantes)
+    const fabricante = await Fabricantes.findOne({ where: {id} });
+    res.status(200).json(fabricante)
 }
 
 controller.getFabricanteById = getFabricanteById
 
 const createFabricante = async (req, res) => {
     const {nombre, direccion, numeroContacto, pathImgPerfil} = req.body
-    const product = await Fabricantes.create({
+    const fabricante = await Fabricantes.create({
         nombre,
         direccion,
         numeroContacto, 
         pathImgPerfil 
     })
-    res.status(201).json(product)
+    res.status(201).json(fabricante)
     
 }
 controller.createFabricante = createFabricante
 
 const updateFabricante = async (req, res) => {
-    const {nombre, descripcion} = req.body
+    const {nombre, direccion,numeroContacto,pathImgPerfil} = req.body
     const id = req.params.id
     await Fabricantes.update(
         { nombre, direccion, numeroContacto, pathImgPerfil },
@@ -55,17 +55,20 @@ const deleteFabricanteById = async (req, res) => {
 }
 controller.deleteFabricanteById = deleteFabricanteById
 
-const getFabricanteWhitAllComponents = async(req, res) => {
+const getFabricanteWhitAllProducts = async(req, res) => {
     const id =  req.params.id;
-    const producto = await Fabricantes.findOne({
+    const fabricante = await Fabricantes.findOne({
         where: {id},
         include: {
-            model: Componentes,
-            as: 'Componentes'
+            model: Productos, 
+            as: 'Productos',
+            through: {
+                attributes: []
+            }
         }
     });
-    res.status(200).json(producto)
+    res.status(200).json(fabricante)
 }
-controller.getFabricanteWhitAllComponents = getFabricanteWhitAllComponents
+controller.getFabricanteWhitAllProducts = getFabricanteWhitAllProducts
 
 module.exports = controller

@@ -19,6 +19,6 @@ route.put('/fabricantes/:id', fabricantesMiddleware.validateIdFabricante, fabric
 
 route.delete('/fabricantes/:id', fabricantesMiddleware.validateIdFabricante, fabricantesController.deleteFabricanteById)
 
-route.get('/fabricantes/:id/productos',schemaValidator(productosArraySchema), fabricantesMiddleware.validateIdFabricante, fabricantesController.getFabricanteWhitAllComponents)
+route.get('/fabricantes/:id/productos', fabricantesMiddleware.validateIdFabricante, fabricantesController.getFabricanteWhitAllProducts)
 
 module.exports = route
