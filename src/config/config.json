@@ -1,7 +1,7 @@
 {
   "development": {
     "username": "root",
-    "password": "191198",
+    "password": "123456",
     "database": "entitystore",
     "host": "data/data.sqlite",
     "dialect": "sqlite"

@@ -6,7 +6,9 @@
     "repl": "nodemon test.js",
     "dev": "nodemon src/index.js",
     "start": "node src/index.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "sync-db": "node src/initDB.js false",
+    "init-db": "node src/initDB.js true"
   },
   "keywords": [],
   "author": "",

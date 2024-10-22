@@ -1,6 +1,6 @@
 const { Router } = require('express')
 const productosController = require('../controllers/productos.controller')
-const { productosMiddleware } = require('../middlewares')
+const { productosMiddleware, fabricantesMiddleware, componentesMiddleware } = require('../middlewares')
 const schemaValidator = require('../middlewares/schemaValidator')
 const {productosSchema} = require('../schemas/productos.schema')
 const {fabricanteSchema,fabricantesArraySchema} = require('../schemas/fabricantes.schema')
@@ -10,7 +10,7 @@ const route = Router()
 
 route.get('/productos', productosController.getAllProductos)
 
-route.get('/productos/:id',
+route.get('/productos/:productoId',
     productosMiddleware.validateIdProducto,
     productosController.getProductoById
 )
@@ -20,28 +20,36 @@ route.post('/productos',
     productosController.createProducto
 )
 
-route.put('/productos/:id',productosMiddleware.validateIdProducto, productosController.updateProducto)
+route.put('/productos/:productoId',productosMiddleware.validateIdProducto, productosController.updateProducto)
 
-route.delete('/productos/:id',productosMiddleware.validateIdProducto, productosController.deleteProductoById)
+route.delete('/productos/:productoId',productosMiddleware.validateIdProducto, productosController.deleteProductoById)
 
-route.get('/productos/:id/fabricantes', productosMiddleware.validateIdProducto, productosController.getProductoWhitAllFabricantes)
+route.get('/productos/:productoId/fabricantes', productosMiddleware.validateIdProducto, productosController.getProductoWhitAllFabricantes)
 
-route.post('/productos/:id/fabricantes',
+route.post('/productos/:productoId/fabricantes',
     productosMiddleware.validateIdProducto,
     schemaValidator(fabricantesArraySchema), 
     productosController.addFabricantesToProducto)
 
-route.get('/productos/:id/componentes', productosMiddleware.validateIdProducto, productosController.getProductoWhitAllComponents)
+route.get('/productos/:productoId/componentes', productosMiddleware.validateIdProducto, productosController.getProductoWhitAllComponents)
 
-route.post('/productos/:id/componentes',
+route.post('/productos/:productoId/componentes',
     productosMiddleware.validateIdProducto,
     schemaValidator(componentesArraySchema), 
     productosController.addComponentesToProducto)
 
 route.get('/productos/:minPrecio/:maxPrecio',productosMiddleware.validarPrecios, productosController.filterProductoMinMaxPrecio)
 
-route.put('/productos/:productoId/fabricantes/:fabricanteId', productosController.addFabricanteToProductoById)
+route.put('/productos/:productoId/fabricantes/:fabricanteId', 
+    productosMiddleware.validateIdProducto,
+    fabricantesMiddleware.validateIdFabricante,
+    productosController.addFabricanteToProductoById
+)
 
-route.put('/productos/:productoId/componentes/:componenteId', productosController.addComponenteToProductoById)
+route.put('/productos/:productoId/componentes/:componenteId',
+    productosMiddleware.validateIdProducto,
+    componentesMiddleware.validateIdComponente,
+    productosController.addComponenteToProductoById
+)
 
 module.exports = route

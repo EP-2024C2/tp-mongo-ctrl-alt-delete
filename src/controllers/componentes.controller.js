@@ -10,7 +10,7 @@ const getAllComponentes = async (req, res) =>{
 controller.getAllComponentes = getAllComponentes
 
 const getComponenteById = async(req, res) => {
-    const id =  req.params.id;
+    const id =  req.params.componenteId;
     const componentes = await Componentes.findOne({ where: {id} });
     res.status(200).json(componentes)
 }
@@ -30,7 +30,7 @@ controller.createComponente = createComponente
 
 const updateComponente = async (req, res) => {
     const {nombre, descripcion} = req.body
-    const id = req.params.id
+    const id = req.params.componenteId
     const [updated] = await Componentes.update(
         { nombre, descripcion },
         { where: { id } }
@@ -42,8 +42,8 @@ controller.updateComponente = updateComponente
 
 const deleteComponenteById = async (req, res) => {
     try{
-    const idComponente = req.params.id
-    const r = await Componentes.destroy( {where: {id:idComponente}})
+    const componenteId = req.params.componenteId
+    const r = await Componentes.destroy( {where: {id:componenteId}})
     res.status(200).json({mensaje:  `Componente eliminado`})
     }
     catch(error){
@@ -55,7 +55,7 @@ controller.deleteComponenteById = deleteComponenteById
 
 
 const getComponentWhitAllProducts = async(req, res) => {
-    const id =  req.params.id;
+    const id =  req.params.componenteId;
     const componente = await Componentes.findOne({
         where: {id},
         include: {

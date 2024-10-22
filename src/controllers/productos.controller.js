@@ -11,7 +11,7 @@ const getAllProductos = async (req, res) =>{
 controller.getAllProductos = getAllProductos
 
 const getProductoById = async(req, res) => {
-    const id =  req.params.id;
+    const id =  req.params.productoId;
     const producto = await Productos.findOne({where: {id}});
     res.status(200).json(producto)
 }
@@ -31,7 +31,7 @@ controller.createProducto = createProducto
 
 const updateProducto = async (req, res) => {
     const {nombre, descripcion, precio, pathImg} = req.body
-    const id = req.params.id
+    const id = req.params.productoId
 
     await Productos.update(
         { nombre, descripcion, precio, pathImg },
@@ -44,7 +44,7 @@ controller.updateProducto = updateProducto
 
 const deleteProductoById = async (req, res) => {
     try{
-        const idProducto = req.params.id
+        const idProducto = req.params.productoId
         const r = await Productos.destroy( {where: {id:idProducto}})
         res.status(200).json({mensaje:  `Producto eliminado`})
     }
@@ -56,7 +56,7 @@ const deleteProductoById = async (req, res) => {
 controller.deleteProductoById = deleteProductoById
 
 const getProductoWhitAllFabricantes = async(req, res) => {
-    const id =  req.params.id;
+    const id =  req.params.productoId;
     const producto = await Productos.findOne({
         where: {id},
         include: {
@@ -72,7 +72,7 @@ const getProductoWhitAllFabricantes = async(req, res) => {
 controller.getProductoWhitAllFabricantes = getProductoWhitAllFabricantes
 
 const getProductoWhitAllComponents = async(req, res) => {
-    const id =  req.params.id;
+    const id =  req.params.productoId;
     const producto = await Productos.findOne({
         where: {id},
         include: {
@@ -89,7 +89,7 @@ controller.getProductoWhitAllComponents = getProductoWhitAllComponents
 
 const addFabricantesToProducto = async (req, res) => {
     const arrayFabricantes = req.body
-    const id = req.params.id
+    const id = req.params.productoId
     const productos = await Productos.findByPk(id) 
      
     let promesas = [];
@@ -105,7 +105,7 @@ controller.addFabricantesToProducto = addFabricantesToProducto
 
 const addComponentesToProducto = async (req, res) => {
     const arrayComponentes = req.body
-    const id = req.params.id
+    const id = req.params.productoId
     const productos = await Productos.findByPk(id) 
      
     let promesas = [];

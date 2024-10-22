@@ -10,7 +10,7 @@ const getAllFabricantes = async (req, res) =>{
 controller.getAllFabricantes = getAllFabricantes
 
 const getFabricanteById = async(req, res) => {
-    const id =  req.params.id;
+    const id =  req.params.fabricanteId;
     const fabricante = await Fabricantes.findOne({ where: {id} });
     res.status(200).json(fabricante)
 }
@@ -32,7 +32,7 @@ controller.createFabricante = createFabricante
 
 const updateFabricante = async (req, res) => {
     const {nombre, direccion,numeroContacto,pathImgPerfil} = req.body
-    const id = req.params.id
+    const id = req.params.fabricanteId
     await Fabricantes.update(
         { nombre, direccion, numeroContacto, pathImgPerfil },
         { where: { id } }
@@ -44,8 +44,8 @@ controller.updateFabricante = updateFabricante
 
 const deleteFabricanteById = async (req, res) => {
     try{
-    const idFabricante = req.params.id
-    const r = await Fabricantes.destroy( {where: {id:idFabricante}})
+    const fabricanteId = req.params.fabricanteId
+    const r = await Fabricantes.destroy( {where: {id:fabricanteId}})
     res.status(200).json({mensaje:  `Fabricante eliminado`})
     }
     catch(error){
@@ -56,7 +56,7 @@ const deleteFabricanteById = async (req, res) => {
 controller.deleteFabricanteById = deleteFabricanteById
 
 const getFabricanteWhitAllProducts = async(req, res) => {
-    const id =  req.params.id;
+    const id =  req.params.fabricanteId;
     const fabricante = await Fabricantes.findOne({
         where: {id},
         include: {

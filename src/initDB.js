@@ -6,31 +6,23 @@ const seedProductoFabricante = require('./seeders/producto-fabricante-seed'); //
 
 const db = require('./models')
 
-async function iniciarBD() {
+async function iniciarBD(populateDatabase) {
   try {
-    await db.sequelize.sync({ force: true }); // Sincroniza la base de datos y elimina datos existentes
-    console.log('Base de datos sincronizada.');
+    await db.sequelize.sync({ force: true });
 
-
-    // Ejecuta los seeders
-    await seedFabricantes.up(db.sequelize.getQueryInterface());
-    console.log('Seeders de Fabricantes ejecutados.');
-
-    await seedProductos.up(db.sequelize.getQueryInterface());
-    console.log('Seeders de Productos ejecutados.');
-
-    await seedComponentes.up(db.sequelize.getQueryInterface());
-    console.log('Seeders de Componentes ejecutados.');
-
-    await seedProductoComponente.up(db.sequelize.getQueryInterface());
-    console.log('Seeders de Producto_Componente ejecutados.');
-
-    await seedProductoFabricante.up(db.sequelize.getQueryInterface());
-    console.log('Seeders de Producto_Fabricante ejecutados.');
-
+    if (populateDatabase) {
+      await seedFabricantes.up(db.sequelize.getQueryInterface());
+      await seedProductos.up(db.sequelize.getQueryInterface());
+      await seedComponentes.up(db.sequelize.getQueryInterface());
+      await seedProductoComponente.up(db.sequelize.getQueryInterface());
+      await seedProductoFabricante.up(db.sequelize.getQueryInterface());
+    }
+    
   } catch (error) {
     console.error('Error al inicializar la base de datos:', error);
   }
 }
+// Leer argumento de la línea de comandos
+const syncDatabase = process.argv[2] === 'true'; // Comprobar si el segundo argumento es 'true'
 
-module.exports = iniciarBD;
+iniciarBD(syncDatabase);

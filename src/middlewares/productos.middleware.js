@@ -1,7 +1,7 @@
 const { Productos } = require('../models')
 const middleware = {}
 const validateIdProducto = async (req, res, next)=>{
-    const id = req.params.id
+    const id = req.params.productoId
     const producto = await Productos.findByPk(id)
     if (!producto)
         return res.status(404).json({mensaje: `El id=${id} no exite.`})
