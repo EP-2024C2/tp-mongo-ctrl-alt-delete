@@ -7,6 +7,7 @@
 - Levantar api
 
 # Instalar dependencias
+-Ejecutar
     ```bash
       npm install
 
@@ -19,9 +20,8 @@
     ```bash
       npm run sync-db
 
-
 # Iniciar API
-
+-Ejecutar
     ```bash
     npm run dev
 
