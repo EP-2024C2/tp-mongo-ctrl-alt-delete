@@ -27,3 +27,5 @@
 
 # Observaciones
     Decidimos que en las rutas los id se llamen productoId, fabricanteId, componenteId, ya que habia conflictos con los middleware en caso de querer validar 2 ids de una misma ruta
+
+![DER](./data/DER.png)
