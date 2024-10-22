@@ -11,11 +11,11 @@
       npm install
 
 # Crear tablas con/sin datos
-    - Creacion de tablas con datos precargados
+- Creacion de tablas con datos precargados
     ```bash
       npm run init-db
 
-    - Creacion de tablas sin datos
+- Creacion de tablas sin datos
     ```bash
       npm run sync-db
 
