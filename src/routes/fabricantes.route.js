@@ -18,6 +18,6 @@ route.put('/fabricantes/:fabricanteId', fabricantesMiddleware.validateIdFabrican
 
 route.delete('/fabricantes/:fabricanteId', fabricantesMiddleware.validateIdFabricante, fabricantesController.deleteFabricanteById)
 
-route.get('/fabricantes/:fabricanteId/productos', fabricantesMiddleware.validateIdFabricante, fabricantesController.getFabricanteWhitAllProducts)
+route.get('/fabricantes/:fabricanteId/productos', fabricantesMiddleware.validateIdFabricante, fabricantesController.getFabricanteWithAllProducts)
 
 module.exports = route

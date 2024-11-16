@@ -6,6 +6,7 @@ const MONGO_URL =
 async function connectToDatabase() {
   try {
     await mongoose.connect(MONGO_URL);
+    console.log(MONGO_URL)
     console.log("Conexión a mongo realizada con exito");
   } catch (err) {
     console.error("Error al conectarse a mongo", err.message);
