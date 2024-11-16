@@ -2,7 +2,7 @@ const { Router } = require('express')
 const componentesController = require('../controllers/componentes.controller')
 const { componentesMiddleware } = require('../middlewares')
 const schemaValidator = require('../middlewares/schemaValidator')
-const {componenteSchema} = require('../schemas/componentes.schema')
+const {Componente} = require('../schemas/componentesSchema.js')
 
 const route = Router()
 

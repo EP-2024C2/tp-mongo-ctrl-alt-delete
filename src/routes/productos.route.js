@@ -2,9 +2,9 @@ const { Router } = require('express')
 const productosController = require('../controllers/productos.controller')
 const { productosMiddleware, fabricantesMiddleware, componentesMiddleware } = require('../middlewares')
 const schemaValidator = require('../middlewares/schemaValidator')
-const {productosSchema} = require('../schemas/productos.schema')
-const {fabricanteSchema,fabricantesArraySchema} = require('../schemas/fabricantes.schema')
-const {componenteSchema,componentesArraySchema} = require('../schemas/componentes.schema')
+const Producto = require('../schemas/productosSchema.js')
+const Fabricante = require('../schemas/fabricantesSchema.js')
+const Componente = require('../schemas/componentesSchema.js')
 
 const route = Router()
 
@@ -16,7 +16,7 @@ route.get('/productos/:productoId',
 )
 
 route.post('/productos',
-    schemaValidator(productosSchema), 
+    schemaValidator(Producto), 
     productosController.createProducto
 )
 
@@ -24,18 +24,18 @@ route.put('/productos/:productoId',productosMiddleware.validateIdProducto, produ
 
 route.delete('/productos/:productoId',productosMiddleware.validateIdProducto, productosController.deleteProductoById)
 
-route.get('/productos/:productoId/fabricantes', productosMiddleware.validateIdProducto, productosController.getProductoWhitAllFabricantes)
+route.get('/productos/:productoId/fabricantes', productosMiddleware.validateIdProducto, productosController.getProductoWithAllFabricantes)
 
 route.post('/productos/:productoId/fabricantes',
     productosMiddleware.validateIdProducto,
-    schemaValidator(fabricantesArraySchema), 
+    schemaValidator(Fabricante), 
     productosController.addFabricantesToProducto)
 
-route.get('/productos/:productoId/componentes', productosMiddleware.validateIdProducto, productosController.getProductoWhitAllComponents)
+route.get('/productos/:productoId/componentes', productosMiddleware.validateIdProducto, productosController.getProductoWithAllComponents)
 
 route.post('/productos/:productoId/componentes',
     productosMiddleware.validateIdProducto,
-    schemaValidator(componentesArraySchema), 
+    schemaValidator(Componente), 
     productosController.addComponentesToProducto)
 
 route.get('/productos/:minPrecio/:maxPrecio',productosMiddleware.validarPrecios, productosController.filterProductoMinMaxPrecio)

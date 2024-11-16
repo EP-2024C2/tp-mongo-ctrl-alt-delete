@@ -1,70 +1,105 @@
-const { Componentes, Productos } = require('../models')
+// const Componente = require('../schemas/componentesSchema'); // Importando el modelo de Mongoose
+// const Producto = require('../schemas/productosSchema'); // Importando el modelo de Mongoose
 
-const controller = {}
+// const controller = {};
 
-const getAllComponentes = async (req, res) =>{
-    const data = await Componentes.findAll({})
-    res.status(200).json(data)
-}
+// // Obtener todos los componentes
+// const getAllComponentes = async (req, res) => {
+//   try {
+//     const data = await Componente.find(); // find() en Mongoose obtiene todos los documentos
+//     res.status(200).json(data);
+//   } catch (error) {
+//     res.status(500).json({ mensaje: 'Error al obtener los componentes', error: error.message });
+//   }
+// };
 
-controller.getAllComponentes = getAllComponentes
+// controller.getAllComponentes = getAllComponentes;
 
-const getComponenteById = async(req, res) => {
-    const id =  req.params.componenteId;
-    const componentes = await Componentes.findOne({ where: {id} });
-    res.status(200).json(componentes)
-}
+// // Obtener un componente por ID
+// const getComponenteById = async (req, res) => {
+//   const id = req.params.componenteId;
 
-controller.getComponenteById = getComponenteById
+//   try {
+//     const componente = await Componente.findById(id); // findById() en Mongoose
+//     if (!componente) {
+//       return res.status(404).json({ mensaje: `Componente con id=${id} no encontrado` });
+//     }
+//     res.status(200).json(componente);
+//   } catch (error) {
+//     res.status(500).json({ mensaje: 'Error al obtener el componente', error: error.message });
+//   }
+// };
 
-const createComponente = async (req, res) => {
-    const {nombre, descripcion} = req.body
-    const componente = await Componentes.create({
-        nombre,
-        descripcion,
-        
-    })
-    res.status(201).json(componente)
-}
-controller.createComponente = createComponente
+// controller.getComponenteById = getComponenteById;
 
-const updateComponente = async (req, res) => {
-    const {nombre, descripcion} = req.body
-    const id = req.params.componenteId
-    const [updated] = await Componentes.update(
-        { nombre, descripcion },
-        { where: { id } }
-    );
-    const componente = await Componentes.findByPk(id)
-    res.status(200).json(componente)
-}
-controller.updateComponente = updateComponente
+// // Crear un nuevo componente
+// const createComponente = async (req, res) => {
+//   const { nombre, descripcion } = req.body;
 
-const deleteComponenteById = async (req, res) => {
-    try{
-    const componenteId = req.params.componenteId
-    const r = await Componentes.destroy( {where: {id:componenteId}})
-    res.status(200).json({mensaje:  `Componente eliminado`})
-    }
-    catch(error){
-        console.error(error);
-        res.status(500).json({mensaje:  `Ha ocurrido un error`})
-    }
-}
-controller.deleteComponenteById = deleteComponenteById
+//   try {
+//     const componente = new Componente({
+//       nombre,
+//       descripcion
+//     });
 
+//     await componente.save(); // En Mongoose, usamos save() para guardar el documento
+//     res.status(201).json(componente);
+//   } catch (error) {
+//     res.status(500).json({ mensaje: 'Error al crear el componente', error: error.message });
+//   }
+// };
 
-const getComponentWhitAllProducts = async(req, res) => {
-    const id =  req.params.componenteId;
-    const componente = await Componentes.findOne({
-        where: {id},
-        include: {
-            model: Productos,
-            as: 'Productos'
-        }
-    });
-    res.status(200).json(componente)
-}
-controller.getComponentWhitAllProducts = getComponentWhitAllProducts
+// controller.createComponente = createComponente;
 
-module.exports = controller
+// // Actualizar un componente por ID
+// const updateComponente = async (req, res) => {
+//   const { nombre, descripcion } = req.body;
+//   const id = req.params.componenteId;
+
+//   try {
+//     const componente = await Componente.findByIdAndUpdate(id, { nombre, descripcion }, { new: true }); // findByIdAndUpdate actualiza el documento
+//     if (!componente) {
+//       return res.status(404).json({ mensaje: `Componente con id=${id} no encontrado` });
+//     }
+//     res.status(200).json(componente);
+//   } catch (error) {
+//     res.status(500).json({ mensaje: 'Error al actualizar el componente', error: error.message });
+//   }
+// };
+
+// controller.updateComponente = updateComponente;
+
+// // Eliminar un componente por ID
+// const deleteComponenteById = async (req, res) => {
+//   const id = req.params.componenteId;
+
+//   try {
+//     const componente = await Componente.findByIdAndDelete(id); // findByIdAndDelete elimina el documento
+//     if (!componente) {
+//       return res.status(404).json({ mensaje: `Componente con id=${id} no encontrado` });
+//     }
+//     res.status(200).json({ mensaje: 'Componente eliminado' });
+//   } catch (error) {
+//     res.status(500).json({ mensaje: 'Error al eliminar el componente', error: error.message });
+//   }
+// };
+
+// controller.deleteComponenteById = deleteComponenteById;
+
+// const getComponentWhitAllProducts = async (req, res) => {
+//   const id = req.params.componenteId;
+
+//   try {
+//     const componente = await Componente.findById(id).populate('productos'); // populate() en Mongoose para obtener relaciones
+//     if (!componente) {
+//       return res.status(404).json({ mensaje: `Componente con id=${id} no encontrado` });
+//     }
+//     res.status(200).json(componente);
+//   } catch (error) {
+//     res.status(500).json({ mensaje: 'Error al obtener el componente con productos', error: error.message });
+//   }
+// };
+
+// controller.getComponentWhitAllProducts = getComponentWhitAllProducts;
+
+// module.exports = controller;

@@ -1,13 +1,23 @@
-const { Productos } = require('../models')
-const middleware = {}
-const validateIdProducto = async (req, res, next)=>{
-    const id = req.params.productoId
-    const producto = await Productos.findByPk(id)
-    if (!producto)
-        return res.status(404).json({mensaje: `El id=${id} no exite.`})
-    next()
-}
-middleware.validateIdProducto = validateIdProducto
+const Producto = require('../schemas/productosSchema');
+
+const middleware = {};
+
+const validateIdProducto = async (req, res, next) => {
+  const id = req.params.productoId;
+
+  try {
+    const producto = await Producto.findById(id);
+    if (!producto) {
+      return res.status(404).json({ mensaje: `El producto con id=${id} no existe.` });
+    }
+
+    next();
+  } catch (error) {
+    return res.status(500).json({ mensaje: 'Hubo un error al buscar el producto.', error: error.message });
+  }
+};
+
+middleware.validateIdProducto = validateIdProducto;
 
 function validarPrecios(req, res, next) {
     const { minPrecio, maxPrecio } = req.params;
@@ -22,7 +32,7 @@ function validarPrecios(req, res, next) {
     next();
 }
 middleware.validarPrecios = validarPrecios
-  
 
-module.exports = middleware
+module.exports = middleware;
+
 

@@ -1,154 +1,224 @@
-const { Componentes, Productos, Fabricantes } = require('../models')
-const { Sequelize, DataTypes } = require('sequelize');
+const Producto = require('../schemas/productosSchema');
+const Fabricante = require('../schemas/fabricantesSchema');
+const Componente = require('../schemas/componentesSchema');
 
-const controller = {}
+const controller = {};
 
-const getAllProductos = async (req, res) =>{
-    const data = await Productos.findAll({})
-    res.status(200).json(data)
-}
+const getAllProductos = async (req, res) => {
+    try {
+        const data = await Producto.find();
+        res.status(200).json(data);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
 
-controller.getAllProductos = getAllProductos
+controller.getAllProductos = getAllProductos;
 
-const getProductoById = async(req, res) => {
-    const id =  req.params.productoId;
-    const producto = await Productos.findOne({where: {id}});
-    res.status(200).json(producto)
-}
-controller.getProductoById = getProductoById
 
+const getProductoById = async (req, res) => {
+    const id = req.params.productoId;
+    try {
+        const producto = await Producto.findById(id).populate('fabricantes').populate('componentes');
+        if (!producto) {
+            return res.status(404).json({ message: 'Producto no encontrado' });
+        }
+        res.status(200).json(producto);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
+controller.getProductoById = getProductoById;
+
+// Crear un nuevo producto
 const createProducto = async (req, res) => {
-    const {nombre, descripcion, precio, pathImg} = req.body
-    const producto = await Productos.create({
-        nombre,
-        descripcion,
-        precio,
-        pathImg
-    })
-    res.status(201).json(producto)
-}
-controller.createProducto = createProducto
+    const { nombre, descripcion, precio, pathImg } = req.body;
+    try {
+        const producto = new Producto({
+            nombre,
+            descripcion,
+            precio,
+            pathImg
+        });
+        await producto.save();
+        res.status(201).json(producto);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
+controller.createProducto = createProducto;
 
 const updateProducto = async (req, res) => {
-    const {nombre, descripcion, precio, pathImg} = req.body
-    const id = req.params.productoId
+    const { nombre, descripcion, precio, pathImg } = req.body;
+    const id = req.params.productoId;
+    try {
+        const producto = await Producto.findByIdAndUpdate(id, {
+            nombre,
+            descripcion,
+            precio,
+            pathImg
+        }, { new: true });
+        if (!producto) {
+            return res.status(404).json({ message: 'Producto no encontrado' });
+        }
+        res.status(200).json(producto);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
 
-    await Productos.update(
-        { nombre, descripcion, precio, pathImg },
-        { where: { id } }
-    );
-    const updatedProducto = await Productos.findByPk(id);
-    res.status(200).json(updatedProducto)
-}
-controller.updateProducto = updateProducto
+controller.updateProducto = updateProducto;
+
 
 const deleteProductoById = async (req, res) => {
-    try{
-        const idProducto = req.params.productoId
-        const r = await Productos.destroy( {where: {id:idProducto}})
-        res.status(200).json({mensaje:  `Producto eliminado`})
-    }
-    catch(error){
-        console.error(error);
-        res.status(500).json({mensaje:  `Ha ocurrido un error`})
-    }
-}
-controller.deleteProductoById = deleteProductoById
-
-const getProductoWhitAllFabricantes = async(req, res) => {
-    const id =  req.params.productoId;
-    const producto = await Productos.findOne({
-        where: {id},
-        include: {
-            model: Fabricantes,
-            as: 'Fabricantes',
-            through: {
-                attributes: []
-            }
+    const idProducto = req.params.productoId;
+    try {
+        const producto = await Producto.findByIdAndDelete(idProducto);
+        if (!producto) {
+            return res.status(404).json({ message: 'Producto no encontrado' });
         }
-    });
-    res.status(200).json(producto)
-}
-controller.getProductoWhitAllFabricantes = getProductoWhitAllFabricantes
+        res.status(200).json({ message: 'Producto eliminado' });
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
 
-const getProductoWhitAllComponents = async(req, res) => {
-    const id =  req.params.productoId;
-    const producto = await Productos.findOne({
-        where: {id},
-        include: {
-            model: Componentes,
-            as: 'Componentes',
-            through: {
-                attributes: []
-            }
+controller.deleteProductoById = deleteProductoById;
+
+const getProductoWithAllFabricantes = async (req, res) => {
+    const id = req.params.productoId;
+    try {
+        const producto = await Producto.findById(id).populate('fabricantes');
+        if (!producto) {
+            return res.status(404).json({ message: 'Producto no encontrado' });
         }
-    });
-    res.status(200).json(producto)
-}
-controller.getProductoWhitAllComponents = getProductoWhitAllComponents
+        res.status(200).json(producto);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
 
+controller.getProductoWithAllFabricantes = getProductoWithAllFabricantes;
+
+// Obtener un producto con todos los componentes
+const getProductoWithAllComponents = async (req, res) => {
+    const id = req.params.productoId;
+    try {
+        const producto = await Producto.findById(id).populate('componentes');
+        if (!producto) {
+            return res.status(404).json({ message: 'Producto no encontrado' });
+        }
+        res.status(200).json(producto);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
+controller.getProductoWithAllComponents = getProductoWithAllComponents;
+
+// Asociar fabricantes a un producto
 const addFabricantesToProducto = async (req, res) => {
-    const arrayFabricantes = req.body
-    const id = req.params.productoId
-    const productos = await Productos.findByPk(id) 
-     
-    let promesas = [];
-    arrayFabricantes.forEach(fabricante => {
-        promesas.push( Fabricantes.create(fabricante) )
-    });
-    const fabricantes = await Promise.all(promesas)
-    productos.addFabricantes(fabricantes)
-    res.status(201).json({message: 'Los fabricantes fueron asociados al producto'})
-}
-
-controller.addFabricantesToProducto = addFabricantesToProducto
-
-const addComponentesToProducto = async (req, res) => {
-    const arrayComponentes = req.body
-    const id = req.params.productoId
-    const productos = await Productos.findByPk(id) 
-     
-    let promesas = [];
-    arrayComponentes.forEach(componente => {
-        promesas.push( Componentes.create(componente) )
-    });
-    const componentes = await Promise.all(promesas)
-    productos.addComponentes(componentes)
-    res.status(201).json({message: 'Los componentes fueron asociados al producto'})
-}
-
-controller.addComponentesToProducto = addComponentesToProducto
-
-const filterProductoMinMaxPrecio = async (req,res) => {
-    const { minPrecio, maxPrecio } = req.params;
-    const productos = await Productos.findAll({
-        where: {
-            precio: {
-                [Sequelize.Op.gte]: Number(minPrecio),
-                [Sequelize.Op.lte]: Number(maxPrecio)
-            }
+    const arrayFabricantes = req.body;
+    const id = req.params.productoId;
+    try {
+        const producto = await Producto.findById(id);
+        if (!producto) {
+            return res.status(404).json({ message: 'Producto no encontrado' });
         }
-    });
-    res.status(200).json(productos);
-}
-controller.filterProductoMinMaxPrecio = filterProductoMinMaxPrecio
 
+        // Asociar fabricantes
+        for (let fabricanteData of arrayFabricantes) {
+            const fabricante = new Fabricante(fabricanteData);
+            await fabricante.save();
+            producto.fabricantes.push(fabricante);
+        }
+        await producto.save();
+        res.status(201).json({ message: 'Los fabricantes fueron asociados al producto' });
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
+controller.addFabricantesToProducto = addFabricantesToProducto;
+
+// Asociar componentes a un producto
+const addComponentesToProducto = async (req, res) => {
+    const arrayComponentes = req.body;
+    const id = req.params.productoId;
+    try {
+        const producto = await Producto.findById(id);
+        if (!producto) {
+            return res.status(404).json({ message: 'Producto no encontrado' });
+        }
+
+        // Asociar componentes
+        for (let componenteData of arrayComponentes) {
+            const componente = new Componente(componenteData);
+            await componente.save();
+            producto.componentes.push(componente);
+        }
+        await producto.save();
+        res.status(201).json({ message: 'Los componentes fueron asociados al producto' });
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
+controller.addComponentesToProducto = addComponentesToProducto;
+
+// Filtrar productos por precio
+const filterProductoMinMaxPrecio = async (req, res) => {
+    const { minPrecio, maxPrecio } = req.params;
+    try {
+        const productos = await Producto.find({
+            precio: { $gte: minPrecio, $lte: maxPrecio }
+        });
+        res.status(200).json(productos);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
+controller.filterProductoMinMaxPrecio = filterProductoMinMaxPrecio;
+
+// Asociar un fabricante a un producto por ID
 const addFabricanteToProductoById = async (req, res) => {
     const { productoId, fabricanteId } = req.params;
-    const producto = await Productos.findByPk(productoId);
-    const fabricante = await Fabricantes.findByPk(fabricanteId);
-    await producto.addFabricantes(fabricante);
-    res.status(201).json({ message: 'Fabricante asociado al producto con éxito' });
-}
-controller.addFabricanteToProductoById = addFabricanteToProductoById
+    try {
+        const producto = await Producto.findById(productoId);
+        const fabricante = await Fabricante.findById(fabricanteId);
+        if (!producto || !fabricante) {
+            return res.status(404).json({ message: 'Producto o fabricante no encontrado' });
+        }
+        producto.fabricantes.push(fabricante);
+        await producto.save();
+        res.status(201).json({ message: 'Fabricante asociado al producto con éxito' });
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
 
+controller.addFabricanteToProductoById = addFabricanteToProductoById;
+
+// Asociar un componente a un producto por ID
 const addComponenteToProductoById = async (req, res) => {
     const { productoId, componenteId } = req.params;
-    const producto = await Productos.findByPk(productoId);
-    const componente = await Componentes.findByPk(componenteId);
-    await producto.addComponentes(componente);
-    res.status(201).json({ message: 'Componente asociado al producto con éxito' });
-}
-controller.addComponenteToProductoById = addComponenteToProductoById
+    try {
+        const producto = await Producto.findById(productoId);
+        const componente = await Componente.findById(componenteId);
+        if (!producto || !componente) {
+            return res.status(404).json({ message: 'Producto o componente no encontrado' });
+        }
+        producto.componentes.push(componente);
+        await producto.save();
+        res.status(201).json({ message: 'Componente asociado al producto con éxito' });
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
 
-module.exports = controller
+controller.addComponenteToProductoById = addComponenteToProductoById;
+
+module.exports = controller;

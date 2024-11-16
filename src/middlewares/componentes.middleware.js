@@ -1,13 +1,18 @@
-const { Componentes } = require('../models')
-const middleware = {}
-const validateIdComponente = async (req, res, next)=>{
-    const id = req.params.componenteId
-    const producto = await Componentes.findByPk(id)
-    if (!producto)
-        return res.status(404).json({mensaje: `El id=${id} no exite.`})
-    next()
-}
-middleware.validateIdComponente = validateIdComponente
+const Componente = require('../schemas/componentesSchema.js'); // Asegúrate de que el modelo de Componentes está configurado con Mongoose
+const middleware = {};
 
-module.exports = middleware
+const validateIdComponente = async (req, res, next) => {
+  const id = req.params.componenteId;
 
+  const componente = await Componente.findById(id);
+
+  if (!componente) {
+    return res.status(404).json({ mensaje: `El id=${id} no existe.` });
+  }
+
+  next();
+};
+
+middleware.validateIdComponente = validateIdComponente;
+
+module.exports = middleware;
