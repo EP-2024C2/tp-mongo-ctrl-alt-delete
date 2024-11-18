@@ -11,13 +11,12 @@ route.get('/fabricantes', fabricantesController.getAllFabricantes)
 route.get('/fabricantes/:fabricanteId', fabricantesMiddleware.validateIdFabricante, fabricantesController.getFabricanteById )
 
 route.post('/fabricantes',
-            schemaValidator(Fabricante), 
             fabricantesController.createFabricante)
 
 route.put('/fabricantes/:fabricanteId', fabricantesMiddleware.validateIdFabricante, fabricantesController.updateFabricante)
 
 route.delete('/fabricantes/:fabricanteId', fabricantesMiddleware.validateIdFabricante, fabricantesController.deleteFabricanteById)
 
-route.get('/fabricantes/:fabricanteId/productos', fabricantesMiddleware.validateIdFabricante, fabricantesController.getFabricanteWithAllProducts)
+route.get('/fabricantesProductos/:fabricanteId', fabricantesMiddleware.validateIdFabricante, fabricantesController.getFabricanteWithAllProducts)
 
 module.exports = route

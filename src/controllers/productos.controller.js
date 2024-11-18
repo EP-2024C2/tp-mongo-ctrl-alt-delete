@@ -4,6 +4,7 @@ const Componente = require('../schemas/componentesSchema');
 
 const controller = {};
 
+// Obtener todos los productos
 const getAllProductos = async (req, res) => {
     try {
         const data = await Producto.find();
@@ -15,11 +16,11 @@ const getAllProductos = async (req, res) => {
 
 controller.getAllProductos = getAllProductos;
 
-
+// Obtener producto por ID
 const getProductoById = async (req, res) => {
     const id = req.params.productoId;
     try {
-        const producto = await Producto.findById(id).populate('fabricantes').populate('componentes');
+        const producto = await Producto.findById(id);
         if (!producto) {
             return res.status(404).json({ message: 'Producto no encontrado' });
         }
@@ -33,26 +34,51 @@ controller.getProductoById = getProductoById;
 
 // Crear un nuevo producto
 const createProducto = async (req, res) => {
-    const { nombre, descripcion, precio, pathImg } = req.body;
+    const { nombre, descripcion, precio, pathImg, fabricantes } = req.body;
+
     try {
+        // Verificar si todos los fabricantes existen
+        for (let fabricanteId of fabricantes) {
+            const fabricanteExistente = await Fabricante.findById(fabricanteId);
+            if (!fabricanteExistente) {
+                return res.status(400).json({ mensaje: `El fabricante con ID ${fabricanteId} no existe.` });
+            }
+        }
+
+        // Si todos los fabricantes existen, creamos el producto
         const producto = new Producto({
             nombre,
             descripcion,
             precio,
-            pathImg
+            pathImg,
+            fabricantes,  // Asignamos el array de fabricantes al producto
         });
+
         await producto.save();
-        res.status(201).json(producto);
+
+        // Ahora, actualizar los fabricantes para que cada uno tenga el ID del producto asociado
+        for (let fabricanteId of fabricantes) {
+            const fabricante = await Fabricante.findById(fabricanteId);
+            if (fabricante) {
+                fabricante.productos.push(producto._id); // Añadimos el producto al array de productos del fabricante
+                await fabricante.save(); // Guardamos el fabricante actualizado
+            }
+        }
+
+        res.status(201).json(producto); // Responde con el producto creado
     } catch (error) {
-        res.status(500).json({ message: error.message });
+        console.error(error);
+        res.status(500).json({ mensaje: 'Error al crear el producto.' });
     }
 };
 
 controller.createProducto = createProducto;
 
+// Actualizar un producto por ID
 const updateProducto = async (req, res) => {
     const { nombre, descripcion, precio, pathImg } = req.body;
     const id = req.params.productoId;
+
     try {
         const producto = await Producto.findByIdAndUpdate(id, {
             nombre,
@@ -60,9 +86,11 @@ const updateProducto = async (req, res) => {
             precio,
             pathImg
         }, { new: true });
+
         if (!producto) {
             return res.status(404).json({ message: 'Producto no encontrado' });
         }
+
         res.status(200).json(producto);
     } catch (error) {
         res.status(500).json({ message: error.message });
@@ -71,7 +99,7 @@ const updateProducto = async (req, res) => {
 
 controller.updateProducto = updateProducto;
 
-
+// Eliminar un producto por ID
 const deleteProductoById = async (req, res) => {
     const idProducto = req.params.productoId;
     try {
@@ -79,6 +107,16 @@ const deleteProductoById = async (req, res) => {
         if (!producto) {
             return res.status(404).json({ message: 'Producto no encontrado' });
         }
+
+        // Eliminar el ID del producto de los fabricantes relacionados
+        for (let fabricanteId of producto.fabricantes) {
+            const fabricante = await Fabricante.findById(fabricanteId);
+            if (fabricante) {
+                fabricante.productos = fabricante.productos.filter(prodId => prodId.toString() !== idProducto);
+                await fabricante.save();
+            }
+        }
+
         res.status(200).json({ message: 'Producto eliminado' });
     } catch (error) {
         res.status(500).json({ message: error.message });
@@ -87,6 +125,7 @@ const deleteProductoById = async (req, res) => {
 
 controller.deleteProductoById = deleteProductoById;
 
+// Obtener un producto con todos los fabricantes asociados
 const getProductoWithAllFabricantes = async (req, res) => {
     const id = req.params.productoId;
     try {
@@ -102,22 +141,6 @@ const getProductoWithAllFabricantes = async (req, res) => {
 
 controller.getProductoWithAllFabricantes = getProductoWithAllFabricantes;
 
-// Obtener un producto con todos los componentes
-const getProductoWithAllComponents = async (req, res) => {
-    const id = req.params.productoId;
-    try {
-        const producto = await Producto.findById(id).populate('componentes');
-        if (!producto) {
-            return res.status(404).json({ message: 'Producto no encontrado' });
-        }
-        res.status(200).json(producto);
-    } catch (error) {
-        res.status(500).json({ message: error.message });
-    }
-};
-
-controller.getProductoWithAllComponents = getProductoWithAllComponents;
-
 // Asociar fabricantes a un producto
 const addFabricantesToProducto = async (req, res) => {
     const arrayFabricantes = req.body;
@@ -128,12 +151,19 @@ const addFabricantesToProducto = async (req, res) => {
             return res.status(404).json({ message: 'Producto no encontrado' });
         }
 
-        // Asociar fabricantes
+        // Verificar si todos los fabricantes existen antes de asociarlos
         for (let fabricanteData of arrayFabricantes) {
-            const fabricante = new Fabricante(fabricanteData);
-            await fabricante.save();
-            producto.fabricantes.push(fabricante);
+            const fabricanteExistente = await Fabricante.findById(fabricanteData);
+            if (!fabricanteExistente) {
+                return res.status(400).json({ mensaje: `El fabricante con ID ${fabricanteData._id} no existe.` });
+            }
+            producto.fabricantes.push(fabricanteData);
+
+            // Actualizar también el fabricante para agregar el producto a su lista
+            fabricanteExistente.productos.push(producto._id);
+            await fabricanteExistente.save();
         }
+
         await producto.save();
         res.status(201).json({ message: 'Los fabricantes fueron asociados al producto' });
     } catch (error) {
@@ -142,31 +172,6 @@ const addFabricantesToProducto = async (req, res) => {
 };
 
 controller.addFabricantesToProducto = addFabricantesToProducto;
-
-// Asociar componentes a un producto
-const addComponentesToProducto = async (req, res) => {
-    const arrayComponentes = req.body;
-    const id = req.params.productoId;
-    try {
-        const producto = await Producto.findById(id);
-        if (!producto) {
-            return res.status(404).json({ message: 'Producto no encontrado' });
-        }
-
-        // Asociar componentes
-        for (let componenteData of arrayComponentes) {
-            const componente = new Componente(componenteData);
-            await componente.save();
-            producto.componentes.push(componente);
-        }
-        await producto.save();
-        res.status(201).json({ message: 'Los componentes fueron asociados al producto' });
-    } catch (error) {
-        res.status(500).json({ message: error.message });
-    }
-};
-
-controller.addComponentesToProducto = addComponentesToProducto;
 
 // Filtrar productos por precio
 const filterProductoMinMaxPrecio = async (req, res) => {
@@ -192,8 +197,15 @@ const addFabricanteToProductoById = async (req, res) => {
         if (!producto || !fabricante) {
             return res.status(404).json({ message: 'Producto o fabricante no encontrado' });
         }
+
+        // Asociar el fabricante al producto
         producto.fabricantes.push(fabricante);
         await producto.save();
+
+        // También actualizamos el fabricante para agregar el producto
+        fabricante.productos.push(producto._id);
+        await fabricante.save();
+
         res.status(201).json({ message: 'Fabricante asociado al producto con éxito' });
     } catch (error) {
         res.status(500).json({ message: error.message });
@@ -203,22 +215,32 @@ const addFabricanteToProductoById = async (req, res) => {
 controller.addFabricanteToProductoById = addFabricanteToProductoById;
 
 // Asociar un componente a un producto por ID
-const addComponenteToProductoById = async (req, res) => {
-    const { productoId, componenteId } = req.params;
+const addComponenteToProducto = async (req, res) => {
+    const { productoId } = req.params;
+    const { componentes } = req.body; // Esperamos un array de componentes (con datos completos)
+
     try {
         const producto = await Producto.findById(productoId);
-        const componente = await Componente.findById(componenteId);
-        if (!producto || !componente) {
-            return res.status(404).json({ message: 'Producto o componente no encontrado' });
+        if (!producto) {
+            return res.status(404).json({ message: 'Producto no encontrado' });
         }
-        producto.componentes.push(componente);
+
+        // Asociar componentes al producto
+        console.log(componentes)
+        for (let componenteData of componentes) {
+            producto.componentes.push(componenteData);
+        }
+
         await producto.save();
-        res.status(201).json({ message: 'Componente asociado al producto con éxito' });
+        res.status(201).json({ message: 'Componentes asociados al producto con éxito' });
     } catch (error) {
-        res.status(500).json({ message: error.message });
+        console.error(error);
+        res.status(500).json({ message: 'Error al asociar componentes al producto',
+            error: error
+         });
     }
 };
 
-controller.addComponenteToProductoById = addComponenteToProductoById;
+controller.addComponenteToProducto = addComponenteToProducto;
 
 module.exports = controller;

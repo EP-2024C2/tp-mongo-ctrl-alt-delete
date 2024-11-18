@@ -9,7 +9,7 @@ const seedComponentes = require('./seeders/componentes-seed');
 // Conectar a la base de datos de MongoDB
 async function conectarBD() {
   try {
-    await mongoose.connect('mongodb://admin:admindb@localhost:28018/libro?authSource=admin', {
+    await mongoose.connect('mongodb://admin:admindb@localhost:28018/local?authSource=admin', {
       useNewUrlParser: true,
       useUnifiedTopology: true
     });
@@ -48,7 +48,7 @@ async function iniciarBD(populateDatabase) {
 // Función para limpiar todas las colecciones antes de insertar datos (equivalente al "force" de Sequelize)
 async function limpiarColecciones() {
   try {
-    const collections = ['fabricantes', 'productos', 'componentes', 'producto_componente', 'producto_fabricante'];
+    const collections = ['fabricantes', 'productos', 'componentes'];
     for (let collection of collections) {
       await mongoose.connection.db.dropCollection(collection);
       console.log(`Colección ${collection} limpiada.`);

@@ -17,7 +17,12 @@ const fabricantesSchema = new mongoose.Schema(
     pathImgPerfil:{
         type: Schema.Types.String,
         required: false,
-    }
+    },
+    productos: [{
+      type: Schema.Types.ObjectId,
+      ref: 'Producto',
+      required: false
+    }],
   },
   {
     collection: "fabricantes",
@@ -27,7 +32,6 @@ const fabricantesSchema = new mongoose.Schema(
 fabricantesSchema.set("toJSON", {
   transform: (_, ret) => {
     delete ret.__v;
-    delete ret._id;
   },
 });
 

@@ -1,6 +1,6 @@
 const { Router } = require('express')
 const productosController = require('../controllers/productos.controller')
-const { productosMiddleware, fabricantesMiddleware, componentesMiddleware } = require('../middlewares')
+const { productosMiddleware, fabricantesMiddleware } = require('../middlewares')
 const schemaValidator = require('../middlewares/schemaValidator')
 const Producto = require('../schemas/productosSchema.js')
 const Fabricante = require('../schemas/fabricantesSchema.js')
@@ -24,19 +24,15 @@ route.put('/productos/:productoId',productosMiddleware.validateIdProducto, produ
 
 route.delete('/productos/:productoId',productosMiddleware.validateIdProducto, productosController.deleteProductoById)
 
-route.get('/productos/:productoId/fabricantes', productosMiddleware.validateIdProducto, productosController.getProductoWithAllFabricantes)
+route.get('/productosFabricantes/:productoId', productosMiddleware.validateIdProducto, productosController.getProductoWithAllFabricantes)
 
-route.post('/productos/:productoId/fabricantes',
+route.post('/productosFabricantes/:productoId/',
     productosMiddleware.validateIdProducto,
-    schemaValidator(Fabricante), 
     productosController.addFabricantesToProducto)
-
-route.get('/productos/:productoId/componentes', productosMiddleware.validateIdProducto, productosController.getProductoWithAllComponents)
 
 route.post('/productos/:productoId/componentes',
     productosMiddleware.validateIdProducto,
-    schemaValidator(Componente), 
-    productosController.addComponentesToProducto)
+    productosController.addComponenteToProducto)
 
 route.get('/productos/:minPrecio/:maxPrecio',productosMiddleware.validarPrecios, productosController.filterProductoMinMaxPrecio)
 
@@ -44,12 +40,6 @@ route.put('/productos/:productoId/fabricantes/:fabricanteId',
     productosMiddleware.validateIdProducto,
     fabricantesMiddleware.validateIdFabricante,
     productosController.addFabricanteToProductoById
-)
-
-route.put('/productos/:productoId/componentes/:componenteId',
-    productosMiddleware.validateIdProducto,
-    componentesMiddleware.validateIdComponente,
-    productosController.addComponenteToProductoById
 )
 
 module.exports = route
