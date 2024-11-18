@@ -1,10 +1,6 @@
 const { Router } = require('express')
 const productosController = require('../controllers/productos.controller')
 const { productosMiddleware, fabricantesMiddleware } = require('../middlewares')
-const schemaValidator = require('../middlewares/schemaValidator')
-const Producto = require('../schemas/productosSchema.js')
-const Fabricante = require('../schemas/fabricantesSchema.js')
-const Componente = require('../schemas/componentesSchema.js')
 
 const route = Router()
 
@@ -16,7 +12,6 @@ route.get('/productos/:productoId',
 )
 
 route.post('/productos',
-    schemaValidator(Producto), 
     productosController.createProducto
 )
 

@@ -68,7 +68,9 @@ const createProducto = async (req, res) => {
         res.status(201).json(producto); // Responde con el producto creado
     } catch (error) {
         console.error(error);
-        res.status(500).json({ mensaje: 'Error al crear el producto.' });
+        res.status(500).json({ mensaje: 'Error al crear el producto.',
+            error: error
+        });
     }
 };
 
@@ -93,7 +95,10 @@ const updateProducto = async (req, res) => {
 
         res.status(200).json(producto);
     } catch (error) {
-        res.status(500).json({ message: error.message });
+        res.status(500).json({ 
+            message: 'Error al actualizar Producto. ',
+            error: error
+         });
     }
 };
 
@@ -235,7 +240,8 @@ const addComponenteToProducto = async (req, res) => {
         res.status(201).json({ message: 'Componentes asociados al producto con éxito' });
     } catch (error) {
         console.error(error);
-        res.status(500).json({ message: 'Error al asociar componentes al producto',
+        res.status(500).json({ 
+            message: 'Error al asociar componentes al producto',
             error: error
          });
     }

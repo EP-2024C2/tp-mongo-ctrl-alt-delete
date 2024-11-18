@@ -52,7 +52,8 @@ const createFabricante = async (req, res) => {
     res.status(201).json(fabricante); // Responde con el fabricante creado
   } catch (error) {
     console.error(error);
-    res.status(500).json({ mensaje: 'Error al crear el fabricante.',
+    res.status(500).json({ 
+      mensaje: 'Error al crear el fabricante.',
       error: error
      });
   }
@@ -79,7 +80,10 @@ const updateFabricante = async (req, res) => {
     res.status(200).json(fabricante); // Devuelve el fabricante actualizado
   } catch (error) {
     console.error(error);
-    res.status(500).json({ mensaje: 'Error al actualizar el fabricante.' });
+    res.status(500).json({
+      mensaje: 'Error al actualizar el fabricante.' ,
+      error: error
+    });
   }
 };
 
@@ -166,7 +170,10 @@ const addProductosToFabricante = async (req, res) => {
     res.status(200).json({ mensaje: 'Productos asociados al fabricante correctamente' });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ mensaje: 'Error al asociar productos al fabricante' });
+    res.status(500).json({ 
+      mensaje: 'Error al asociar productos al fabricante',
+      error: error
+     });
   }
 };
 
