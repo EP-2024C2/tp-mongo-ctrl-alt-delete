@@ -27,8 +27,11 @@ La entidad Componentes es una relacion incrustada de Productos ya que no van a s
 
 Cuando se agrega un fabricante a un producto o viceversa, esta relacion es impactada en ambas tablas, es decir, se referencia el id en ambas entidades.
 
-Cuando se borra un fabricante o un producto que estaba siendo referenciado. Se borra la referencia en las tablas necesarias
+Cuando se borra un fabricante o un producto que estaba siendo referenciado. Se borra la referencia en las tablas necesarias.
+
 No usamos schema validator ya que el propio schema definido valida los modelos.
+
+Usamos el id que genera mongo ya que generar otro id autoincremental era muy costoso
 
 
 ## Enpoints
