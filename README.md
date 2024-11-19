@@ -4,9 +4,8 @@
 ## Pasos para iniciar la API
 
 1. Instalar dependencias.
-2. Configurar variables de entorno en el archivo `.env` con los datos de la base de datos que se quiera usar. Si no se especifica, se usará por defecto una base de datos SQLite.
-3. En caso de ser la primera vez que se usa la API, se puede optar por crear las tablas con o sin datos pre-cargados.
-4. Levantar la API.
+2. Levantar base con docker. Ejecutar docker-compose up -d
+3. Levantar la API.
 
 ## Instalar dependencias
 
@@ -20,12 +19,14 @@ npm install
 npm run dev
 ```
 
-## Observaciones
+## Deciciones tomadas
 
-Deciciones tomadas
 En las rutas los ID se llamen `productoId`, `fabricanteId`, ya que había conflictos con los middleware en caso de querer validar 2 IDs de una misma ruta.
+
 La entidad Componentes es una relacion incrustada de Productos ya que no van a ser modificados frecuentemente y porque no tienen proposito por fuera de la Entidad producto.
+
 Cuando se agrega un fabricante a un producto o viceversa, esta relacion es impactada en ambas tablas, es decir, se referencia el id en ambas entidades.
+
 Cuando se borra un fabricante o un producto que estaba siendo referenciado. Se borra la referencia en las tablas necesarias
 No usamos schema validator ya que el propio schema definido valida los modelos.
 

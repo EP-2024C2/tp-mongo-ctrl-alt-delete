@@ -4,7 +4,6 @@ const Componente = require('../schemas/componentesSchema');
 
 const controller = {};
 
-// Obtener todos los productos
 const getAllProductos = async (req, res) => {
     try {
         const data = await Producto.find();
@@ -16,7 +15,6 @@ const getAllProductos = async (req, res) => {
 
 controller.getAllProductos = getAllProductos;
 
-// Obtener producto por ID
 const getProductoById = async (req, res) => {
     const id = req.params.productoId;
     try {
@@ -32,12 +30,10 @@ const getProductoById = async (req, res) => {
 
 controller.getProductoById = getProductoById;
 
-// Crear un nuevo producto
 const createProducto = async (req, res) => {
     const { nombre, descripcion, precio, pathImg, fabricantes } = req.body;
 
     try {
-        // Verificar si todos los fabricantes existen
         for (let fabricanteId of fabricantes) {
             const fabricanteExistente = await Fabricante.findById(fabricanteId);
             if (!fabricanteExistente) {
@@ -45,27 +41,25 @@ const createProducto = async (req, res) => {
             }
         }
 
-        // Si todos los fabricantes existen, creamos el producto
         const producto = new Producto({
             nombre,
             descripcion,
             precio,
             pathImg,
-            fabricantes,  // Asignamos el array de fabricantes al producto
+            fabricantes,  
         });
 
         await producto.save();
 
-        // Ahora, actualizar los fabricantes para que cada uno tenga el ID del producto asociado
         for (let fabricanteId of fabricantes) {
             const fabricante = await Fabricante.findById(fabricanteId);
             if (fabricante) {
-                fabricante.productos.push(producto._id); // Añadimos el producto al array de productos del fabricante
-                await fabricante.save(); // Guardamos el fabricante actualizado
+                fabricante.productos.push(producto._id);
+                await fabricante.save(); 
             }
         }
 
-        res.status(201).json(producto); // Responde con el producto creado
+        res.status(201).json(producto);
     } catch (error) {
         console.error(error);
         res.status(500).json({ mensaje: 'Error al crear el producto.',
@@ -76,7 +70,6 @@ const createProducto = async (req, res) => {
 
 controller.createProducto = createProducto;
 
-// Actualizar un producto por ID
 const updateProducto = async (req, res) => {
     const { nombre, descripcion, precio, pathImg } = req.body;
     const id = req.params.productoId;
@@ -104,7 +97,6 @@ const updateProducto = async (req, res) => {
 
 controller.updateProducto = updateProducto;
 
-// Eliminar un producto por ID
 const deleteProductoById = async (req, res) => {
     const idProducto = req.params.productoId;
     try {
@@ -113,7 +105,6 @@ const deleteProductoById = async (req, res) => {
             return res.status(404).json({ message: 'Producto no encontrado' });
         }
 
-        // Eliminar el ID del producto de los fabricantes relacionados
         for (let fabricanteId of producto.fabricantes) {
             const fabricante = await Fabricante.findById(fabricanteId);
             if (fabricante) {
@@ -130,7 +121,6 @@ const deleteProductoById = async (req, res) => {
 
 controller.deleteProductoById = deleteProductoById;
 
-// Obtener un producto con todos los fabricantes asociados
 const getProductoWithAllFabricantes = async (req, res) => {
     const id = req.params.productoId;
     try {
@@ -146,7 +136,6 @@ const getProductoWithAllFabricantes = async (req, res) => {
 
 controller.getProductoWithAllFabricantes = getProductoWithAllFabricantes;
 
-// Asociar fabricantes a un producto
 const addFabricantesToProducto = async (req, res) => {
     const arrayFabricantes = req.body;
     const id = req.params.productoId;
@@ -156,7 +145,6 @@ const addFabricantesToProducto = async (req, res) => {
             return res.status(404).json({ message: 'Producto no encontrado' });
         }
 
-        // Verificar si todos los fabricantes existen antes de asociarlos
         for (let fabricanteData of arrayFabricantes) {
             const fabricanteExistente = await Fabricante.findById(fabricanteData);
             if (!fabricanteExistente) {
@@ -164,7 +152,6 @@ const addFabricantesToProducto = async (req, res) => {
             }
             producto.fabricantes.push(fabricanteData);
 
-            // Actualizar también el fabricante para agregar el producto a su lista
             fabricanteExistente.productos.push(producto._id);
             await fabricanteExistente.save();
         }
@@ -178,7 +165,6 @@ const addFabricantesToProducto = async (req, res) => {
 
 controller.addFabricantesToProducto = addFabricantesToProducto;
 
-// Filtrar productos por precio
 const filterProductoMinMaxPrecio = async (req, res) => {
     const { minPrecio, maxPrecio } = req.params;
     try {
@@ -193,7 +179,6 @@ const filterProductoMinMaxPrecio = async (req, res) => {
 
 controller.filterProductoMinMaxPrecio = filterProductoMinMaxPrecio;
 
-// Asociar un fabricante a un producto por ID
 const addFabricanteToProductoById = async (req, res) => {
     const { productoId, fabricanteId } = req.params;
     try {
@@ -203,11 +188,9 @@ const addFabricanteToProductoById = async (req, res) => {
             return res.status(404).json({ message: 'Producto o fabricante no encontrado' });
         }
 
-        // Asociar el fabricante al producto
         producto.fabricantes.push(fabricante);
         await producto.save();
 
-        // También actualizamos el fabricante para agregar el producto
         fabricante.productos.push(producto._id);
         await fabricante.save();
 
@@ -219,10 +202,9 @@ const addFabricanteToProductoById = async (req, res) => {
 
 controller.addFabricanteToProductoById = addFabricanteToProductoById;
 
-// Asociar un componente a un producto por ID
 const addComponenteToProducto = async (req, res) => {
     const { productoId } = req.params;
-    const { componentes } = req.body; // Esperamos un array de componentes (con datos completos)
+    const { componentes } = req.body; 
 
     try {
         const producto = await Producto.findById(productoId);
@@ -230,8 +212,6 @@ const addComponenteToProducto = async (req, res) => {
             return res.status(404).json({ message: 'Producto no encontrado' });
         }
 
-        // Asociar componentes al producto
-        console.log(componentes)
         for (let componenteData of componentes) {
             producto.componentes.push(componenteData);
         }
